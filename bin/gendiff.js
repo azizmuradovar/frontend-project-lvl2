@@ -4,13 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
 
-const gendiff = (firstPath, secondPath) => {
-  const firstAbsolutePath = path.resolve(process.cwd(), firstPath);
-  const secondAbsolutePath = path.resolve(process.cwd(), secondPath);
-  const firstFileData = fs.readFileSync(firstAbsolutePath, 'utf8');
-  const secondFileData = fs.readFileSync(secondAbsolutePath, 'utf8');
-  const firstObj = JSON.parse(firstFileData);
-  const secondObj = JSON.parse(secondFileData);
+const getDiffBetweenObjects = (firstObj, secondObj) => {
   const firstObjKeys = Object.keys(firstObj);
   const secondObjKeys = Object.keys(secondObj);
   const deletedKeys = _.difference(firstObjKeys, secondObjKeys);
@@ -33,7 +27,18 @@ const gendiff = (firstPath, secondPath) => {
     }
     return acc;
   }, {});
-  return JSON.stringify(result, null, 2).replace(/"/gi, '');
+  return result;
+};
+
+const gendiff = (firstPath, secondPath) => {
+  const firstAbsolutePath = path.resolve(process.cwd(), firstPath);
+  const secondAbsolutePath = path.resolve(process.cwd(), secondPath);
+  const firstFileData = fs.readFileSync(firstAbsolutePath, 'utf8');
+  const secondFileData = fs.readFileSync(secondAbsolutePath, 'utf8');
+  const firstObj = JSON.parse(firstFileData);
+  const secondObj = JSON.parse(secondFileData);
+  const differenceObj = getDiffBetweenObjects(firstObj, secondObj);
+  return JSON.stringify(differenceObj, null, 2).replace(/"/gi, '');
 };
 
 const { Command } = pkg;
