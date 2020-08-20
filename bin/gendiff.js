@@ -20,20 +20,20 @@ const gendiff = (firstPath, secondPath) => {
     const isDeleted = deletedKeys.includes(key);
     const isAdded = addedKeys.includes(key);
     const isEqual = firstObj[key] === secondObj[key];
+
     if (isDeleted) {
-      return (`${acc}\n  - ${key}: ${firstObj[key]}`);
+      acc[`- ${key}`] = firstObj[key];
+    } else if (isAdded) {
+      acc[`+ ${key}`] = secondObj[key];
+    } else if (isEqual) {
+      acc[`  ${key}`] = secondObj[key];
+    } else {
+      acc[`- ${key}`] = firstObj[key];
+      acc[`+ ${key}`] = secondObj[key];
     }
-    if (isAdded) {
-      return (`${acc}\n  + ${key}: ${secondObj[key]}`);
-    }
-
-    if (isEqual) {
-      return (`${acc}\n    ${key}: ${secondObj[key]}`);
-    }
-
-    return (`${acc}\n  - ${key}: ${firstObj[key]}\n  + ${key}: ${secondObj[key]}`);
-  }, '');
-  return (`{${result}\n}`);
+    return acc;
+  }, {});
+  return JSON.stringify(result, null, 2).replace(/"/gi, '');
 };
 
 const { Command } = pkg;
