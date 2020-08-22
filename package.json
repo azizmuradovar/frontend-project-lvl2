@@ -24,9 +24,15 @@
     "commander": "^6.0.0",
     "lodash": "^4.17.20"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
   "devDependencies": {
+    "@jest/globals": "^26.4.2",
     "eslint": "^7.4.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint-plugin-import": "^2.22.0",
+    "jest": "^26.4.1"
   }
 }
