@@ -1,6 +1,9 @@
 install:
 	npm install
 
+test-coverage:
+	npx -n --experimental-vm-modules jest --coverage
+
 test:
 	npx -n --experimental-vm-modules jest
 
@@ -9,3 +12,4 @@ publish:
 
 lint:
 	npx eslint .
+	
