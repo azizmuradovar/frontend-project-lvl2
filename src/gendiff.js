@@ -1,6 +1,13 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
+import getParser from './parsers';
+
+const getFileData = (pathToFile) => {
+  const absolutePath = path.resolve(process.cwd(), pathToFile);
+  const fileData = fs.readFileSync(absolutePath, 'utf8');
+  return fileData;
+};
 
 const getDiffBetweenObjects = (firstObj, secondObj) => {
   const firstObjKeys = Object.keys(firstObj);
@@ -28,13 +35,17 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
   return result;
 };
 
-const gendiff = (firstPath, secondPath) => {
-  const firstAbsolutePath = path.resolve(process.cwd(), firstPath);
-  const secondAbsolutePath = path.resolve(process.cwd(), secondPath);
-  const firstFileData = fs.readFileSync(firstAbsolutePath, 'utf8');
-  const secondFileData = fs.readFileSync(secondAbsolutePath, 'utf8');
-  const firstObj = JSON.parse(firstFileData);
-  const secondObj = JSON.parse(secondFileData);
+const getParsedData = (pathToFile) => {
+  const extname = path.extname(pathToFile);
+  const data = getFileData(pathToFile);
+  const parser = getParser(extname);
+  const parsedData = parser(data);
+  return parsedData;
+};
+
+const gendiff = (path1, path2) => {
+  const firstObj = getParsedData(path1);
+  const secondObj = getParsedData(path2);
   const differenceObj = getDiffBetweenObjects(firstObj, secondObj);
   return JSON.stringify(differenceObj, null, 2).replace(/"/gi, '');
 };

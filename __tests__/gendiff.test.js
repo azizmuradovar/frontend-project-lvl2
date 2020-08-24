@@ -39,4 +39,11 @@ describe('gendiff', () => {
     const expectedDifference = expectedFileData.replace(/"/gi, '');
     expect(expectedDifference).toEqual(difference);
   });
+  test('yml type', () => {
+    const { file1, file2 } = getFilePathsByType('yml');
+    const expectedFileData = fs.readFileSync(expectedPath, 'utf8');
+    const difference = gendiff(file1, file2);
+    const expectedDifference = expectedFileData.replace(/"/gi, '');
+    expect(expectedDifference).toEqual(difference);
+  });
 });
