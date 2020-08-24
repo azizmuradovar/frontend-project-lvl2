@@ -9,3 +9,6 @@
 
 ## Demo gendiff yml format
 [![asciicast](https://asciinema.org/a/355292.svg)](https://asciinema.org/a/355292)
+
+## Demo gendiff ini format
+[![asciicast](https://asciinema.org/a/355303.svg)](https://asciinema.org/a/355303)
