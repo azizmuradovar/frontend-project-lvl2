@@ -6,3 +6,6 @@
 
 ## Demo gendiff json format
 [![asciicast](https://asciinema.org/a/354428.svg)](https://asciinema.org/a/354428)
+
+## Demo gendiff yml format
+[![asciicast](https://asciinema.org/a/355292.svg)](https://asciinema.org/a/355292)
