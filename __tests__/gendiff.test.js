@@ -14,6 +14,7 @@ const defaultFixturePath = '__fixtures__/';
 const folderByType = {
   json: `${defaultFixturePath}json`,
   yml: `${defaultFixturePath}yml`,
+  ini: `${defaultFixturePath}ini`,
 };
 
 const expectedFileName = 'expected.json';
@@ -32,15 +33,8 @@ const getFilePathsByType = (type) => ({
 });
 
 describe('gendiff', () => {
-  test('json type', () => {
-    const { file1, file2 } = getFilePathsByType('json');
-    const expectedFileData = fs.readFileSync(expectedPath, 'utf8');
-    const difference = gendiff(file1, file2);
-    const expectedDifference = expectedFileData.replace(/"/gi, '');
-    expect(expectedDifference).toEqual(difference);
-  });
-  test('yml type', () => {
-    const { file1, file2 } = getFilePathsByType('yml');
+  test.each(['json', 'yml', 'ini'])('%s', (format) => {
+    const { file1, file2 } = getFilePathsByType(format);
     const expectedFileData = fs.readFileSync(expectedPath, 'utf8');
     const difference = gendiff(file1, file2);
     const expectedDifference = expectedFileData.replace(/"/gi, '');
