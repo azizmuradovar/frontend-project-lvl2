@@ -4,5 +4,5 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/ea130860e02f10170352/maintainability)](https://codeclimate.com/github/azizmuradovar/frontend-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ea130860e02f10170352/test_coverage)](https://codeclimate.com/github/azizmuradovar/frontend-project-lvl2/test_coverage)
 
-## Demo gendiff
+## Demo gendiff json format
 [![asciicast](https://asciinema.org/a/354428.svg)](https://asciinema.org/a/354428)
