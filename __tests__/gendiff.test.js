@@ -9,16 +9,33 @@ import gendiff from '../src/gendiff';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__/jsonType', filename);
+const defaultFixturePath = '__fixtures__/';
 
-const filePath1 = getFixturePath('jsonFile1.json');
-const filePath2 = getFixturePath('jsonFile2.json');
-const expectedFilePath = getFixturePath('expectedFile.json');
-const expectedFileData = fs.readFileSync(expectedFilePath, 'utf8');
+const folderByType = {
+  json: `${defaultFixturePath}json`,
+  yml: `${defaultFixturePath}yml`,
+};
+
+const expectedFileName = 'expected.json';
+const expectedPath = join(__dirname, '..', defaultFixturePath, expectedFileName);
+
+const getFixturePath = (filename, type) => join(
+  __dirname,
+  '..',
+  folderByType[type],
+  `${filename}.${type}`,
+);
+
+const getFilePathsByType = (type) => ({
+  file1: getFixturePath('file1', type),
+  file2: getFixturePath('file2', type),
+});
 
 describe('gendiff', () => {
   test('json type', () => {
-    const difference = gendiff(filePath1, filePath2);
+    const { file1, file2 } = getFilePathsByType('json');
+    const expectedFileData = fs.readFileSync(expectedPath, 'utf8');
+    const difference = gendiff(file1, file2);
     const expectedDifference = expectedFileData.replace(/"/gi, '');
     expect(expectedDifference).toEqual(difference);
   });
