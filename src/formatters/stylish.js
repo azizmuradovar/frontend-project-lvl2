@@ -1,8 +1,8 @@
 import isLikeObjectTree from '../helpers/isLikeObjectTree.js';
 
 const stylishFormatter = (arr, depth = 0) => {
-  const prefix = '  '.repeat(1 + depth);
   const endPrefix = '  '.repeat(depth);
+  const prefix = `${endPrefix}  `;
   const result = arr.map((item) => {
     const {
       name,
@@ -13,14 +13,14 @@ const stylishFormatter = (arr, depth = 0) => {
       newValue,
     } = item;
 
-    const getValue = (test) => {
-      if (!isLikeObjectTree(test)) {
-        return test;
+    const getValue = (currentValue) => {
+      if (!isLikeObjectTree(currentValue)) {
+        return currentValue;
       }
-      const tree = Object.keys(test).map((key) => ({
+      const tree = Object.keys(currentValue).map((key) => ({
         name: key,
         type: 'equal',
-        value: test[key],
+        value: currentValue[key],
       }));
       return stylishFormatter(tree, depth + 2);
     };
