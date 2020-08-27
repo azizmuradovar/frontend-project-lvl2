@@ -4,23 +4,15 @@ import { test, expect, describe } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import gendiff from '../src/gendiff';
-import expected from '../__fixtures__/expected.js';
+import getExpectedStr from '../__fixtures__/expected';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const defaultFixturePath = '__fixtures__/';
-
-const folderByType = {
-  json: `${defaultFixturePath}json`,
-  yml: `${defaultFixturePath}yml`,
-  ini: `${defaultFixturePath}ini`,
-};
-
 const getFixturePath = (filename, type) => join(
   __dirname,
   '..',
-  folderByType[type],
+  `__fixtures__/${type}`,
   `${filename}.${type}`,
 );
 
@@ -30,9 +22,17 @@ const getFilePathsByType = (type) => ({
 });
 
 describe('gendiff', () => {
-  test.each(['json', 'yml', 'ini'])('%s', (format) => {
-    const { file1, file2 } = getFilePathsByType(format);
-    const difference = gendiff(file1, file2);
-    expect(expected).toEqual(difference);
+  test.each`
+  extname   | format
+  ${'json'} | ${'stylish'}
+  ${'json'} | ${'plain'}
+  ${'yml'}  | ${'stylish'}
+  ${'yml'}  | ${'plain'}
+  ${'ini'}  | ${'stylish'}
+  ${'ini'}  | ${'plain'}
+`('extname = $extname and format = $format', ({ extname, format }) => {
+    const { file1, file2 } = getFilePathsByType(extname);
+    const difference = gendiff(file1, file2, format);
+    expect(getExpectedStr(format)).toEqual(difference);
   });
 });

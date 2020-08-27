@@ -4,6 +4,7 @@ import _ from 'lodash';
 import getParser from './parsers.js';
 import isLikeObjectTree from './helpers/isLikeObjectTree.js';
 import stylish from './formatters/stylish.js';
+import plain from './formatters/plain.js';
 
 const getFileData = (pathToFile) => {
   const absolutePath = path.resolve(process.cwd(), pathToFile);
@@ -73,6 +74,7 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
 
 const formattersByType = {
   stylish,
+  plain,
 };
 
 const gendiff = (path1, path2, format = 'stylish') => {
