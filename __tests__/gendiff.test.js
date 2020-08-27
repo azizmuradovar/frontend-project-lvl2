@@ -3,8 +3,8 @@
 import { test, expect, describe } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import fs from 'fs';
 import gendiff from '../src/gendiff';
+import expected from '../__fixtures__/expected.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,9 +16,6 @@ const folderByType = {
   yml: `${defaultFixturePath}yml`,
   ini: `${defaultFixturePath}ini`,
 };
-
-const expectedFileName = 'expected.json';
-const expectedPath = join(__dirname, '..', defaultFixturePath, expectedFileName);
 
 const getFixturePath = (filename, type) => join(
   __dirname,
@@ -35,9 +32,7 @@ const getFilePathsByType = (type) => ({
 describe('gendiff', () => {
   test.each(['json', 'yml', 'ini'])('%s', (format) => {
     const { file1, file2 } = getFilePathsByType(format);
-    const expectedFileData = fs.readFileSync(expectedPath, 'utf8');
     const difference = gendiff(file1, file2);
-    const expectedDifference = expectedFileData.replace(/"/gi, '');
-    expect(expectedDifference).toEqual(difference);
+    expect(expected).toEqual(difference);
   });
 });
