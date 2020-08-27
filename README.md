@@ -5,10 +5,10 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ea130860e02f10170352/test_coverage)](https://codeclimate.com/github/azizmuradovar/frontend-project-lvl2/test_coverage)
 
 ## Demo gendiff json format
-[![asciicast](https://asciinema.org/a/354428.svg)](https://asciinema.org/a/354428)
+[![asciicast](https://asciinema.org/a/356190.svg)](https://asciinema.org/a/356190)
 
 ## Demo gendiff yml format
-[![asciicast](https://asciinema.org/a/355292.svg)](https://asciinema.org/a/355292)
+[![asciicast](https://asciinema.org/a/356192.svg)](https://asciinema.org/a/356192)
 
 ## Demo gendiff ini format
-[![asciicast](https://asciinema.org/a/355303.svg)](https://asciinema.org/a/355303)
+[![asciicast](https://asciinema.org/a/356191.svg)](https://asciinema.org/a/356191)
