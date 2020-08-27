@@ -32,41 +32,42 @@ const getChangeValueType = (firstObj, secondObj, key) => {
   return 'changed';
 };
 
+const getValueByType = (firstValue, secondValue, changeType) => {
+  switch (changeType) {
+    case 'changed':
+      return { oldValue : firstValue, newValue: secondValue };
+    case 'add':
+      return { value: secondValue };
+    case 'delete':
+      return { value: firstValue };
+    case 'equal':
+      return { value: firstValue };
+    default:
+      throw new Error(`Unknown change type - ${changeType}`);
+  }
+};
+
 const getDiffBetweenObjects = (firstObj, secondObj) => {
   const uniqSortedKeys = (
     _.uniq([...Object.keys(firstObj), ...Object.keys(secondObj)]).sort()
   );
   const result = uniqSortedKeys.reduce((acc, key) => {
     const changeType = getChangeValueType(firstObj, secondObj, key);
-    const currentValue = {
+    const firstValue = firstObj[key];
+    const secondValue = secondObj[key];
+    const value = getValueByType(firstValue, secondValue, changeType);
+    let current = {
       name: key,
       type: changeType,
     };
-    const firstValue = firstObj[key];
-    const secondValue = secondObj[key];
+
     const hasChildren = isLikeObjectTree(firstValue) && isLikeObjectTree(secondValue);
-    switch (changeType) {
-      case 'changed':
-        if (hasChildren) {
-          currentValue.children = getDiffBetweenObjects(firstValue, secondValue);
-        } else {
-          currentValue.oldValue = firstValue;
-          currentValue.newValue = secondValue;
-        }
-        break;
-      case 'add':
-        currentValue.value = secondValue;
-        break;
-      case 'delete':
-        currentValue.value = firstValue;
-        break;
-      case 'equal':
-        currentValue.value = firstValue;
-        break;
-      default:
-        throw new Error(`Unknown change type - ${changeType}`);
+    if (changeType === 'changed' && hasChildren) {
+      current.children = getDiffBetweenObjects(firstValue, secondValue);
+    } else {
+      current = { ...current, ...value };
     }
-    acc.push(currentValue);
+    acc.push(current);
     return acc;
   }, []);
   return result;
