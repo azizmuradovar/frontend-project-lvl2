@@ -1,8 +1,8 @@
 import yaml from 'js-yaml';
 import ini from 'ini';
 
-const getParser = (format) => {
-  switch (format) {
+export default (extname) => {
+  switch (extname) {
     case '.json':
       return JSON.parse;
     case '.yml':
@@ -10,8 +10,6 @@ const getParser = (format) => {
     case '.ini':
       return ini.parse;
     default:
-      return JSON.parse;
+      throw new Error(`Unknown Parser for '${extname}' type`);
   }
 };
-
-export default getParser;
