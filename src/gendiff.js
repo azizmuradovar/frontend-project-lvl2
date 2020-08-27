@@ -35,7 +35,7 @@ const getChangeValueType = (firstObj, secondObj, key) => {
 const getValueByType = (firstValue, secondValue, changeType) => {
   switch (changeType) {
     case 'changed':
-      return { oldValue : firstValue, newValue: secondValue };
+      return { oldValue: firstValue, newValue: secondValue };
     case 'add':
       return { value: secondValue };
     case 'delete':
