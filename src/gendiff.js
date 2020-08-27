@@ -3,7 +3,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import isLikeObjectTree from './helpers/isLikeObjectTree.js';
 import getParserByExtname from './parsers.js';
-import getFormattersByType from './formatters';
+import getFormattersByType from './formatters/index.js';
 
 const getFileData = (pathToFile) => {
   const absolutePath = path.resolve(process.cwd(), pathToFile);
