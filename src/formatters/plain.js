@@ -35,7 +35,7 @@ const getValueRow = (elem) => {
   return `${startMessageByType[type]}${valueMessageByType[type]}`;
 };
 
-const plainFormatter = (arr) => {
+const plainFormatter = (tree) => {
   const changedValues = [];
   const getChangedValues = (values, path = []) => {
     values.forEach((el) => {
@@ -50,7 +50,7 @@ const plainFormatter = (arr) => {
       }
     });
   };
-  getChangedValues(arr);
+  getChangedValues(tree);
   const result = changedValues.map(getValueRow).join('\n');
   return result;
 };

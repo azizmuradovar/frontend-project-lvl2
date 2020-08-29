@@ -26,10 +26,13 @@ describe('gendiff', () => {
   extname   | format
   ${'json'} | ${'stylish'}
   ${'json'} | ${'plain'}
+  ${'json'} | ${'json'}
   ${'yml'}  | ${'stylish'}
   ${'yml'}  | ${'plain'}
+  ${'yml'}  | ${'json'}
   ${'ini'}  | ${'stylish'}
   ${'ini'}  | ${'plain'}
+  ${'ini'}  | ${'json'}
 `('extname = $extname and format = $format', ({ extname, format }) => {
     const { file1, file2 } = getFilePathsByType(extname);
     const difference = gendiff(file1, file2, format);
