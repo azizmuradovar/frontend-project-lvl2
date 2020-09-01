@@ -1,4 +1,4 @@
-import isLikeObjectTree from '../helpers/isLikeObjectTree.js';
+import _ from 'lodash';
 
 const stylishFormatter = (arr, depth = 0) => {
   const endPrefix = '  '.repeat(depth);
@@ -7,39 +7,38 @@ const stylishFormatter = (arr, depth = 0) => {
     const {
       name,
       children,
-      type,
-      value,
-      oldValue,
-      newValue,
+      changeType,
+      valueBefore,
+      valueAfter,
     } = item;
 
     const getValue = (currentValue) => {
-      if (!isLikeObjectTree(currentValue)) {
+      if (!_.isPlainObject(currentValue)) {
         return currentValue;
       }
       const tree = Object.keys(currentValue).map((key) => ({
         name: key,
-        type: 'equal',
-        value: currentValue[key],
+        changeType: 'equal',
+        valueBefore: currentValue[key],
       }));
       return stylishFormatter(tree, depth + 2);
     };
 
-    if (type === 'changed' && children) {
+    if (changeType === 'changed' && children) {
       return `${prefix}  ${name}: ${stylishFormatter(children, depth + 2)}`;
     }
-    if (type === 'changed' && !children) {
-      const deleteData = `${prefix}- ${name}: ${getValue(oldValue)}`;
-      const addedData = `${prefix}+ ${name}: ${getValue(newValue)}`;
+    if (changeType === 'changed' && !children) {
+      const deleteData = `${prefix}- ${name}: ${getValue(valueBefore)}`;
+      const addedData = `${prefix}+ ${name}: ${getValue(valueAfter)}`;
       return `${deleteData}\n${addedData}`;
     }
-    if (type === 'delete') {
-      return `${prefix}- ${name}: ${getValue(value)}`;
+    if (changeType === 'delete') {
+      return `${prefix}- ${name}: ${getValue(valueBefore)}`;
     }
-    if (type === 'add') {
-      return `${prefix}+ ${name}: ${getValue(value)}`;
+    if (changeType === 'add') {
+      return `${prefix}+ ${name}: ${getValue(valueAfter)}`;
     }
-    return `${prefix}  ${name}: ${getValue(value)}`;
+    return `${prefix}  ${name}: ${getValue(valueBefore)}`;
   }).join('\n');
 
   return `{\n${result}\n${endPrefix}}`;

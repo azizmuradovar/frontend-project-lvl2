@@ -1,9 +1,9 @@
-import isLikeObjectTree from '../helpers/isLikeObjectTree.js';
+import _ from 'lodash';
 
 const changedTypes = ['add', 'delete', 'changed'];
 
 const getValue = (value) => {
-  if (isLikeObjectTree(value)) {
+  if (_.isPlainObject(value)) {
     return '[complex value]';
   }
   return typeof value === 'string' ? `'${value}'` : value;
@@ -12,10 +12,9 @@ const getValue = (value) => {
 const getValueRow = (elem) => {
   const {
     path,
-    type,
-    value,
-    oldValue,
-    newValue,
+    changeType,
+    valueBefore,
+    valueAfter,
   } = elem;
 
   const defaultStr = `Property '${path.join('.')}' was`;
@@ -27,21 +26,21 @@ const getValueRow = (elem) => {
   };
 
   const valueMessageByType = {
-    add: `${getValue(value)}`,
+    add: `${getValue(valueAfter)}`,
     delete: '',
-    changed: `From ${getValue(oldValue)} to ${getValue(newValue)}`,
+    changed: `From ${getValue(valueBefore)} to ${getValue(valueAfter)}`,
   };
 
-  return `${startMessageByType[type]}${valueMessageByType[type]}`;
+  return `${startMessageByType[changeType]}${valueMessageByType[changeType]}`;
 };
 
 const plainFormatter = (tree) => {
   const changedValues = [];
   const getChangedValues = (values, path = []) => {
     values.forEach((el) => {
-      const { type, name, children } = el;
+      const { changeType, name, children } = el;
       const currentPath = [...path, name];
-      if (changedTypes.includes(type)) {
+      if (changedTypes.includes(changeType)) {
         if (children) {
           getChangedValues(children, [...path, name]);
         } else {

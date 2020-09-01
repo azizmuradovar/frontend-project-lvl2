@@ -25,9 +25,6 @@ jobs:
     # Runs a single command using the runners shell
     - name: install
       run: make install
-      
-    - name: test
-      run: make test
 
     - name: Test & publish code coverage
       # Publish code coverage on Code Climate

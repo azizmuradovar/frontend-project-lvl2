@@ -3,7 +3,7 @@
 import { test, expect, describe } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import gendiff from '../src/gendiff';
+import gendiff from '../index.js';
 import getExpectedStr from '../__fixtures__/expected';
 
 const __filename = fileURLToPath(import.meta.url);

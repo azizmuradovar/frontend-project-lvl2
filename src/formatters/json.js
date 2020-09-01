@@ -3,26 +3,25 @@ const buildObject = (arr) => {
     const {
       name,
       children,
-      type,
-      value,
-      oldValue,
-      newValue,
+      changeType,
+      valueBefore,
+      valueAfter,
     } = item;
-    if (type === 'changed' && children) {
+    if (changeType === 'changed' && children) {
       acc[name] = buildObject(children);
     }
-    if (type === 'changed' && !children) {
-      acc[`- ${name}`] = oldValue;
-      acc[`+ ${name}`] = newValue;
+    if (changeType === 'changed' && !children) {
+      acc[`- ${name}`] = valueBefore;
+      acc[`+ ${name}`] = valueAfter;
     }
-    if (type === 'delete') {
-      acc[`- ${name}`] = value;
+    if (changeType === 'delete') {
+      acc[`- ${name}`] = valueBefore;
     }
-    if (type === 'add') {
-      acc[`+ ${name}`] = value;
+    if (changeType === 'add') {
+      acc[`+ ${name}`] = valueAfter;
     }
-    if (type === 'equal') {
-      acc[name] = value;
+    if (changeType === 'equal') {
+      acc[name] = valueBefore;
     }
     return acc;
   }, {});

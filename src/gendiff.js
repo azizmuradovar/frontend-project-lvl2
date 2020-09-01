@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
-import isLikeObjectTree from './helpers/isLikeObjectTree.js';
 import getParserByExtname from './parsers.js';
 import getFormattersByType from './formatters/index.js';
 
@@ -17,56 +16,31 @@ const getParsedData = (pathToFile) => {
 };
 
 const getChangeValueType = (firstObj, secondObj, key) => {
-  const isDelete = _.has(firstObj, key) && !_.has(secondObj, key);
-  const isAdded = _.has(secondObj, key) && !_.has(firstObj, key);
-  const isEqual = _.isEqual(firstObj[key], secondObj[key]);
-  if (isDelete) {
+  const deletedKeys = _.difference(Object.keys(firstObj), Object.keys(secondObj));
+  const addedKeys = _.difference(Object.keys(secondObj), Object.keys(firstObj));
+  if (deletedKeys.includes(key)) {
     return 'delete';
   }
-  if (isAdded) {
+  if (addedKeys.includes(key)) {
     return 'add';
   }
-  if (isEqual) {
+  if (_.isEqual(firstObj[key], secondObj[key])) {
     return 'equal';
   }
   return 'changed';
 };
 
-const getValueByType = (firstValue, secondValue, changeType) => {
-  switch (changeType) {
-    case 'changed':
-      return { oldValue: firstValue, newValue: secondValue };
-    case 'add':
-      return { value: secondValue };
-    case 'delete':
-      return { value: firstValue };
-    case 'equal':
-      return { value: firstValue };
-    default:
-      throw new Error(`Unknown change type - ${changeType}`);
-  }
-};
-
 const getDiffBetweenObjects = (firstObj, secondObj) => {
-  const uniqSortedKeys = (
-    _.uniq([...Object.keys(firstObj), ...Object.keys(secondObj)]).sort()
-  );
+  const uniqSortedKeys = Object.keys({ ...firstObj, ...secondObj }).sort();
   const result = uniqSortedKeys.reduce((acc, key) => {
-    const changeType = getChangeValueType(firstObj, secondObj, key);
-    const firstValue = firstObj[key];
-    const secondValue = secondObj[key];
-    const value = getValueByType(firstValue, secondValue, changeType);
-    let current = {
+    const hasChildren = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key]);
+    const current = {
       name: key,
-      type: changeType,
+      changeType: getChangeValueType(firstObj, secondObj, key),
+      valueBefore: firstObj[key],
+      valueAfter: secondObj[key],
+      children: hasChildren ? getDiffBetweenObjects(firstObj[key], secondObj[key]) : null,
     };
-
-    const hasChildren = isLikeObjectTree(firstValue) && isLikeObjectTree(secondValue);
-    if (changeType === 'changed' && hasChildren) {
-      current.children = getDiffBetweenObjects(firstValue, secondValue);
-    } else {
-      current = { ...current, ...value };
-    }
     acc.push(current);
     return acc;
   }, []);
