@@ -4,14 +4,14 @@ import _ from 'lodash';
 import getParserByExtname from './parsers.js';
 import getFormattersByType from './formatters/index.js';
 
-const getFileData = (pathToFile) => {
-  const absolutePath = path.resolve(process.cwd(), pathToFile);
+const getFileData = (filepath) => {
+  const absolutePath = path.resolve(process.cwd(), filepath);
   return fs.readFileSync(absolutePath, 'utf8');
 };
 
-const getParsedData = (pathToFile) => {
-  const extname = path.extname(pathToFile);
-  const data = getFileData(pathToFile);
+const getParsedData = (filepath) => {
+  const extname = path.extname(filepath);
+  const data = getFileData(filepath);
   return getParserByExtname(extname)(data);
 };
 
@@ -47,9 +47,9 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
   return result;
 };
 
-const gendiff = (path1, path2, format = 'stylish') => {
-  const firstObj = getParsedData(path1);
-  const secondObj = getParsedData(path2);
+const gendiff = (firstFilepath, secondFilepath, format = 'stylish') => {
+  const firstObj = getParsedData(firstFilepath);
+  const secondObj = getParsedData(secondFilepath);
   const differenceTree = getDiffBetweenObjects(firstObj, secondObj);
   const result = getFormattersByType(format)(differenceTree);
   return result;
