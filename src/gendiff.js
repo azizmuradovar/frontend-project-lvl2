@@ -15,34 +15,45 @@ const getParsedData = (filepath) => {
   return getParserByExtname(extname)(data);
 };
 
-const getChangeValueType = (firstObj, secondObj, key) => {
-  const deletedKeys = _.difference(Object.keys(firstObj), Object.keys(secondObj));
-  const addedKeys = _.difference(Object.keys(secondObj), Object.keys(firstObj));
-  if (deletedKeys.includes(key)) {
-    return 'delete';
-  }
-  if (addedKeys.includes(key)) {
-    return 'add';
-  }
-  if (_.isEqual(firstObj[key], secondObj[key])) {
-    return 'equal';
-  }
-  return 'changed';
-};
-
 const getDiffBetweenObjects = (firstObj, secondObj) => {
-  const uniqSortedKeys = Object.keys({ ...firstObj, ...secondObj }).sort();
+  const uniqSortedKeys = _.union(_.keys(firstObj), _.keys(secondObj)).sort();
   const result = uniqSortedKeys.reduce((acc, key) => {
     const hasChildren = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key]);
-    const current = {
-      name: key,
-      changeType: getChangeValueType(firstObj, secondObj, key),
+    const children = hasChildren
+      ? getDiffBetweenObjects(firstObj[key], secondObj[key])
+      : null;
+    const name = key;
+
+    if (_.has(firstObj, key) && !_.has(secondObj, key)) {
+      const currentNode = {
+        name,
+        changeType: 'delete',
+        valueBefore: firstObj[key],
+        valueAfter: null,
+        children,
+      };
+      return [...acc, currentNode];
+    }
+
+    if (_.has(secondObj, key) && !_.has(firstObj, key)) {
+      const currentNode = {
+        name,
+        changeType: 'add',
+        valueBefore: null,
+        valueAfter: secondObj[key],
+        children,
+      };
+      return [...acc, currentNode];
+    }
+
+    const currentNode = {
+      name,
+      changeType: _.isEqual(firstObj[key], secondObj[key]) ? 'equal' : 'changed',
       valueBefore: firstObj[key],
       valueAfter: secondObj[key],
-      children: hasChildren ? getDiffBetweenObjects(firstObj[key], secondObj[key]) : null,
+      children,
     };
-    acc.push(current);
-    return acc;
+    return [...acc, currentNode];
   }, []);
   return result;
 };
