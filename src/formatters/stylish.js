@@ -5,7 +5,7 @@ const stylishFormatter = (arr, depth = 0) => {
   const prefix = `${endPrefix}  `;
   const result = arr.map((item) => {
     const {
-      name,
+      key,
       children,
       changeType,
       valueBefore,
@@ -17,28 +17,28 @@ const stylishFormatter = (arr, depth = 0) => {
         return currentValue;
       }
       const tree = Object.keys(currentValue).map((key) => ({
-        name: key,
-        changeType: 'equal',
+        key,
+        changeType: 'unchanged',
         valueBefore: currentValue[key],
       }));
       return stylishFormatter(tree, depth + 2);
     };
 
     if (changeType === 'changed' && children) {
-      return `${prefix}  ${name}: ${stylishFormatter(children, depth + 2)}`;
+      return `${prefix}  ${key}: ${stylishFormatter(children, depth + 2)}`;
     }
     if (changeType === 'changed' && !children) {
-      const deleteData = `${prefix}- ${name}: ${getValue(valueBefore)}`;
-      const addedData = `${prefix}+ ${name}: ${getValue(valueAfter)}`;
+      const deleteData = `${prefix}- ${key}: ${getValue(valueBefore)}`;
+      const addedData = `${prefix}+ ${key}: ${getValue(valueAfter)}`;
       return `${deleteData}\n${addedData}`;
     }
-    if (changeType === 'delete') {
-      return `${prefix}- ${name}: ${getValue(valueBefore)}`;
+    if (changeType === 'deleted') {
+      return `${prefix}- ${key}: ${getValue(valueBefore)}`;
     }
-    if (changeType === 'add') {
-      return `${prefix}+ ${name}: ${getValue(valueAfter)}`;
+    if (changeType === 'added') {
+      return `${prefix}+ ${key}: ${getValue(valueAfter)}`;
     }
-    return `${prefix}  ${name}: ${getValue(valueBefore)}`;
+    return `${prefix}  ${key}: ${getValue(valueBefore)}`;
   }).join('\n');
 
   return `{\n${result}\n${endPrefix}}`;

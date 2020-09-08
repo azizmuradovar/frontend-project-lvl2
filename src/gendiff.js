@@ -17,44 +17,50 @@ const getParsedData = (filepath) => {
 
 const getDiffBetweenObjects = (firstObj, secondObj) => {
   const uniqSortedKeys = _.union(_.keys(firstObj), _.keys(secondObj)).sort();
-  const result = uniqSortedKeys.reduce((acc, key) => {
-    const hasChildren = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key]);
-    const children = hasChildren
-      ? getDiffBetweenObjects(firstObj[key], secondObj[key])
-      : null;
-    const name = key;
-
-    if (_.has(firstObj, key) && !_.has(secondObj, key)) {
-      const currentNode = {
-        name,
-        changeType: 'delete',
-        valueBefore: firstObj[key],
-        valueAfter: null,
-        children,
+  const result = uniqSortedKeys.map((key) => {
+    if (!_.has(firstObj, key)) {
+      return {
+        key,
+        changeType: 'added',
+        valueBefore: null,
+        valueAfter: secondObj[key],
+        children: null,
       };
-      return [...acc, currentNode];
     }
 
-    if (_.has(secondObj, key) && !_.has(firstObj, key)) {
-      const currentNode = {
-        name,
-        changeType: 'add',
-        valueBefore: null,
+    if (!_.has(secondObj, key)) {
+      return {
+        key,
+        changeType: 'deleted',
+        valueBefore: firstObj[key],
+        valueAfter: null,
+        children: null,
+      };
+    }
+
+    if (_.isEqual(firstObj[key], secondObj[key])) {
+      return {
+        key,
+        changeType: 'unchanged',
+        valueBefore: firstObj[key],
+        valueAfter: secondObj[key],
+        children: null,
+      };
+    }
+
+    if (!_.isEqual(firstObj[key], secondObj[key])) {
+      const children = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key])
+        ? getDiffBetweenObjects(firstObj[key], secondObj[key])
+        : null;
+      return {
+        key,
+        changeType: 'changed',
+        valueBefore: firstObj[key],
         valueAfter: secondObj[key],
         children,
       };
-      return [...acc, currentNode];
     }
-
-    const currentNode = {
-      name,
-      changeType: _.isEqual(firstObj[key], secondObj[key]) ? 'equal' : 'changed',
-      valueBefore: firstObj[key],
-      valueAfter: secondObj[key],
-      children,
-    };
-    return [...acc, currentNode];
-  }, []);
+  });
   return result;
 };
 

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const changedTypes = ['add', 'delete', 'changed'];
+const changedTypes = ['added', 'deleted', 'changed'];
 
 const getValue = (value) => {
   if (_.isPlainObject(value)) {
@@ -20,14 +20,14 @@ const getValueRow = (elem) => {
   const defaultStr = `Property '${path.join('.')}' was`;
 
   const startMessageByType = {
-    add: `${defaultStr} added with value: `,
-    delete: `${defaultStr} removed`,
+    added: `${defaultStr} added with value: `,
+    deleted: `${defaultStr} removed`,
     changed: `${defaultStr} updated. `,
   };
 
   const valueMessageByType = {
-    add: `${getValue(valueAfter)}`,
-    delete: '',
+    added: `${getValue(valueAfter)}`,
+    deleted: '',
     changed: `From ${getValue(valueBefore)} to ${getValue(valueAfter)}`,
   };
 
@@ -38,11 +38,11 @@ const plainFormatter = (tree) => {
   const changedValues = [];
   const getChangedValues = (values, path = []) => {
     values.forEach((el) => {
-      const { changeType, name, children } = el;
-      const currentPath = [...path, name];
+      const { changeType, key, children } = el;
+      const currentPath = [...path, key];
       if (changedTypes.includes(changeType)) {
         if (children) {
-          getChangedValues(children, [...path, name]);
+          getChangedValues(children, [...path, key]);
         } else {
           changedValues.push({ ...el, path: currentPath });
         }

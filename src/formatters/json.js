@@ -1,27 +1,27 @@
 const buildObject = (arr) => {
   const result = arr.reduce((acc, item) => {
     const {
-      name,
+      key,
       children,
       changeType,
       valueBefore,
       valueAfter,
     } = item;
     if (changeType === 'changed' && children) {
-      acc[name] = buildObject(children);
+      acc[key] = buildObject(children);
     }
     if (changeType === 'changed' && !children) {
-      acc[`- ${name}`] = valueBefore;
-      acc[`+ ${name}`] = valueAfter;
+      acc[`- ${key}`] = valueBefore;
+      acc[`+ ${key}`] = valueAfter;
     }
-    if (changeType === 'delete') {
-      acc[`- ${name}`] = valueBefore;
+    if (changeType === 'deleted') {
+      acc[`- ${key}`] = valueBefore;
     }
-    if (changeType === 'add') {
-      acc[`+ ${name}`] = valueAfter;
+    if (changeType === 'added') {
+      acc[`+ ${key}`] = valueAfter;
     }
-    if (changeType === 'equal') {
-      acc[name] = valueBefore;
+    if (changeType === 'unchanged') {
+      acc[key] = valueBefore;
     }
     return acc;
   }, {});
