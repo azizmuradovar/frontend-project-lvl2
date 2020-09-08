@@ -16,10 +16,10 @@ const stylishFormatter = (arr, depth = 0) => {
       if (!_.isPlainObject(currentValue)) {
         return currentValue;
       }
-      const tree = Object.keys(currentValue).map((key) => ({
-        key,
+      const tree = Object.keys(currentValue).map((currentKey) => ({
+        key: currentKey,
         changeType: 'unchanged',
-        valueBefore: currentValue[key],
+        valueBefore: currentValue[currentKey],
       }));
       return stylishFormatter(tree, depth + 2);
     };
