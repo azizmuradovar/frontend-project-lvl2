@@ -38,28 +38,27 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
       };
     }
 
+    const children = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key])
+      ? getDiffBetweenObjects(firstObj[key], secondObj[key])
+      : null;
+
     if (_.isEqual(firstObj[key], secondObj[key])) {
       return {
         key,
         changeType: 'unchanged',
         valueBefore: firstObj[key],
         valueAfter: secondObj[key],
-        children: null,
-      };
-    }
-
-    if (!_.isEqual(firstObj[key], secondObj[key])) {
-      const children = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key])
-        ? getDiffBetweenObjects(firstObj[key], secondObj[key])
-        : null;
-      return {
-        key,
-        changeType: 'changed',
-        valueBefore: firstObj[key],
-        valueAfter: secondObj[key],
         children,
       };
     }
+
+    return {
+      key,
+      changeType: 'changed',
+      valueBefore: firstObj[key],
+      valueAfter: secondObj[key],
+      children,
+    };
   });
   return result;
 };
