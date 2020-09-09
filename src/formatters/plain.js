@@ -1,7 +1,5 @@
 import _ from 'lodash';
 
-const changedTypes = ['added', 'deleted', 'changed'];
-
 const getValue = (value) => {
   if (_.isPlainObject(value)) {
     return '[complex value]';
@@ -12,11 +10,10 @@ const getValue = (value) => {
 const getValueRow = (elem) => {
   const {
     path,
-    changeType,
+    type,
     valueBefore,
     valueAfter,
   } = elem;
-
   const defaultStr = `Property '${path.join('.')}' was`;
 
   const startMessageByType = {
@@ -31,27 +28,26 @@ const getValueRow = (elem) => {
     changed: `From ${getValue(valueBefore)} to ${getValue(valueAfter)}`,
   };
 
-  return `${startMessageByType[changeType]}${valueMessageByType[changeType]}`;
+  return `${startMessageByType[type]}${valueMessageByType[type]}`;
 };
 
 const plainFormatter = (tree) => {
-  const changedValues = [];
-  const getChangedValues = (values, path = []) => {
-    values.forEach((el) => {
-      const { changeType, key, children } = el;
+  const getChangedNodes = (nodes, path = []) => {
+    const changedNodes = nodes.flatMap((node) => {
+      const { type, key, children } = node;
       const currentPath = [...path, key];
-      if (changedTypes.includes(changeType)) {
-        if (children) {
-          getChangedValues(children, [...path, key]);
-        } else {
-          changedValues.push({ ...el, path: currentPath });
-        }
+      if (type === 'unchanged') {
+        return [];
       }
+      if (type === 'parent') {
+        return getChangedNodes(children, [...path, key]);
+      }
+      return { ...node, path: currentPath };
     });
+    return changedNodes;
   };
-  getChangedValues(tree);
-  const result = changedValues.map(getValueRow).join('\n');
-  return result;
+  const result = getChangedNodes(tree);
+  return result.map(getValueRow).join('\n');
 };
 
 export default plainFormatter;

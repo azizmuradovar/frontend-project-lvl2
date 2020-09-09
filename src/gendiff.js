@@ -21,7 +21,7 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
     if (!_.has(firstObj, key)) {
       return {
         key,
-        changeType: 'added',
+        type: 'added',
         valueBefore: null,
         valueAfter: secondObj[key],
         children: null,
@@ -31,33 +31,40 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
     if (!_.has(secondObj, key)) {
       return {
         key,
-        changeType: 'deleted',
+        type: 'deleted',
         valueBefore: firstObj[key],
         valueAfter: null,
         children: null,
       };
     }
+    const isParent = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key]);
 
-    const children = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key])
-      ? getDiffBetweenObjects(firstObj[key], secondObj[key])
-      : null;
+    if (isParent) {
+      return {
+        key,
+        type: 'parent',
+        valueBefore: firstObj[key],
+        valueAfter: secondObj[key],
+        children: getDiffBetweenObjects(firstObj[key], secondObj[key]),
+      };
+    }
 
     if (_.isEqual(firstObj[key], secondObj[key])) {
       return {
         key,
-        changeType: 'unchanged',
+        type: 'unchanged',
         valueBefore: firstObj[key],
         valueAfter: secondObj[key],
-        children,
+        children: null,
       };
     }
 
     return {
       key,
-      changeType: 'changed',
+      type: 'changed',
       valueBefore: firstObj[key],
       valueAfter: secondObj[key],
-      children,
+      children: null,
     };
   });
   return result;

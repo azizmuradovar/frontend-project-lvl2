@@ -3,27 +3,28 @@ const buildObject = (arr) => {
     const {
       key,
       children,
-      changeType,
+      type,
       valueBefore,
       valueAfter,
     } = item;
-    if (changeType === 'changed' && children) {
-      acc[key] = buildObject(children);
+    switch (type) {
+      case 'added':
+        return { ...acc, [`+ ${key}`]: valueAfter };
+      case 'deleted':
+        return { ...acc, [`- ${key}`]: valueBefore };
+      case 'parent':
+        return { ...acc, [key]: buildObject(children) };
+      case 'unchanged':
+        return { ...acc, [key]: valueBefore };
+      case 'changed':
+        return {
+          ...acc,
+          [`- ${key}`]: valueBefore,
+          [`+ ${key}`]: valueAfter,
+        };
+      default:
+        throw new Error(`Unknown type node ${type} for json parser`);
     }
-    if (changeType === 'changed' && !children) {
-      acc[`- ${key}`] = valueBefore;
-      acc[`+ ${key}`] = valueAfter;
-    }
-    if (changeType === 'deleted') {
-      acc[`- ${key}`] = valueBefore;
-    }
-    if (changeType === 'added') {
-      acc[`+ ${key}`] = valueAfter;
-    }
-    if (changeType === 'unchanged') {
-      acc[key] = valueBefore;
-    }
-    return acc;
   }, {});
   return result;
 };
