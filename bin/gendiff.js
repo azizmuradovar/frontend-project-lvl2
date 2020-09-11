@@ -13,5 +13,3 @@ program
 program.description('Compares two configuration files and shows a difference.');
 program.option('-f, --format [type]', 'output format', 'stylish');
 program.parse(process.argv);
-
-export default gendiff;

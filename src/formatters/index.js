@@ -1,6 +1,5 @@
 import plain from './plain.js';
 import stylish from './stylish.js';
-import json from './json.js';
 
 export default (format) => {
   switch (format) {
@@ -9,7 +8,7 @@ export default (format) => {
     case 'stylish':
       return stylish;
     case 'json':
-      return json;
+      return JSON.stringify;
     default:
       throw new Error(`Unknown formatter - '${format}'`);
   }
