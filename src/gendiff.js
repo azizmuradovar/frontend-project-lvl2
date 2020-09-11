@@ -22,7 +22,7 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
       return {
         key,
         type: 'added',
-        valueAfter: secondObj[key],
+        value: secondObj[key],
       };
     }
 
@@ -30,7 +30,7 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
       return {
         key,
         type: 'deleted',
-        valueBefore: firstObj[key],
+        value: firstObj[key],
       };
     }
     const isParent = _.isPlainObject(firstObj[key]) && _.isPlainObject(secondObj[key]);
@@ -47,8 +47,7 @@ const getDiffBetweenObjects = (firstObj, secondObj) => {
       return {
         key,
         type: 'unchanged',
-        valueBefore: firstObj[key],
-        valueAfter: secondObj[key],
+        value: firstObj[key],
       };
     }
 

@@ -13,6 +13,7 @@ const getValueRow = (elem) => {
     type,
     valueBefore,
     valueAfter,
+    value,
   } = elem;
   const defaultStr = `Property '${path.join('.')}' was`;
 
@@ -23,7 +24,7 @@ const getValueRow = (elem) => {
   };
 
   const valueMessageByType = {
-    added: `${getValue(valueAfter)}`,
+    added: `${getValue(value)}`,
     deleted: '',
     changed: `From ${getValue(valueBefore)} to ${getValue(valueAfter)}`,
   };
