@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
-import getParserByExtname from './parsers.js';
+import getParserByFiletype from './parsers.js';
 import getFormattersByType from './formatters/index.js';
 
 const getFileData = (filepath) => {
@@ -10,9 +10,9 @@ const getFileData = (filepath) => {
 };
 
 const getParsedData = (filepath) => {
-  const extname = path.extname(filepath);
+  const filetype = path.extname(filepath).substring(1);
   const data = getFileData(filepath);
-  return getParserByExtname(extname)(data);
+  return getParserByFiletype(filetype)(data);
 };
 
 const getDiffBetweenObjects = (firstObj, secondObj) => {

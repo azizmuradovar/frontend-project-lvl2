@@ -3,11 +3,11 @@ import ini from 'ini';
 
 export default (extname) => {
   switch (extname) {
-    case '.json':
+    case 'json':
       return JSON.parse;
-    case '.yml':
+    case 'yml':
       return yaml.safeLoad;
-    case '.ini':
+    case 'ini':
       return ini.parse;
     default:
       throw new Error(`Unknown Parser for '${extname}' type`);

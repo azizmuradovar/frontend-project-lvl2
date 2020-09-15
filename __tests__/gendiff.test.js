@@ -8,19 +8,13 @@ import gendiff from '../index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const getExpectedStr = (filename) => {
-  const filepath = join(__dirname, '..', '__fixtures__', 'expected', filename);
-  const data = fs.readFileSync(filepath, 'utf8');
-  return data;
+
+const getFixturePath = (filename) => {
+  const path = join(__dirname, '..', '__fixtures__', filename);
+  return path;
 };
 
-const getFilePathsByType = (type) => {
-  const defaultPath = join(__dirname, '..', '__fixtures__/inspect');
-  return {
-    firstFilepath: join(defaultPath, `file1.${type}`),
-    secondFilepath: join(defaultPath, `file2.${type}`),
-  };
-};
+const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 describe('gendiff', () => {
   test.each`
@@ -35,8 +29,10 @@ describe('gendiff', () => {
   ${'ini'}  | ${'plain'}    | ${'plain.txt'}
   ${'ini'}  | ${'json'}     | ${'json.txt'}
 `('extname = $extname and format = $format', ({ extname, format, expectedFilename }) => {
-    const { firstFilepath, secondFilepath } = getFilePathsByType(extname);
+    const firstFilepath = getFixturePath(`file1.${extname}`);
+    const secondFilepath = getFixturePath(`file2.${extname}`);
     const difference = gendiff(firstFilepath, secondFilepath, format);
-    expect(getExpectedStr(expectedFilename)).toEqual(difference);
+    const expectedData = readFile(expectedFilename);
+    expect(difference).toEqual(expectedData);
   });
 });

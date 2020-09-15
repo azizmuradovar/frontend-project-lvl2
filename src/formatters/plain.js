@@ -7,48 +7,37 @@ const getValue = (value) => {
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-const getValueRow = (elem) => {
-  const {
-    path,
-    type,
-    valueBefore,
-    valueAfter,
-    value,
-  } = elem;
-  const defaultStr = `Property '${path.join('.')}' was`;
-
-  const startMessageByType = {
-    added: `${defaultStr} added with value: `,
-    deleted: `${defaultStr} removed`,
-    changed: `${defaultStr} updated. `,
-  };
-
-  const valueMessageByType = {
-    added: `${getValue(value)}`,
-    deleted: '',
-    changed: `From ${getValue(valueBefore)} to ${getValue(valueAfter)}`,
-  };
-
-  return `${startMessageByType[type]}${valueMessageByType[type]}`;
-};
-
 const plainFormatter = (tree) => {
   const getChangedNodes = (nodes, path = []) => {
     const changedNodes = nodes.flatMap((node) => {
-      const { type, key, children } = node;
-      const currentPath = [...path, key];
-      if (type === 'unchanged') {
-        return [];
+      const {
+        type,
+        key,
+        children,
+        value,
+        valueBefore,
+        valueAfter,
+      } = node;
+      const currentPath = [...path, key].join('.');
+      switch (type) {
+        case 'added':
+          return `Property '${currentPath}' was added with value: ${getValue(value)}`;
+        case 'deleted':
+          return `Property '${currentPath}' was removed`;
+        case 'changed':
+          return `Property '${currentPath}' was updated. From ${getValue(valueBefore)} to ${getValue(valueAfter)}`;
+        case 'parent':
+          return getChangedNodes(children, [...path, key]);
+        case 'unchanged':
+          return [];
+        default:
+          throw new Error(`Unknown node type '${type}' in plain formatter`);
       }
-      if (type === 'parent') {
-        return getChangedNodes(children, [...path, key]);
-      }
-      return { ...node, path: currentPath };
     });
     return changedNodes;
   };
   const result = getChangedNodes(tree);
-  return result.map(getValueRow).join('\n');
+  return result.join('\n');
 };
 
 export default plainFormatter;
