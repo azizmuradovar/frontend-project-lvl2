@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-const stylishFormatter = (arr, depth = 0) => {
-  const endPrefix = '  '.repeat(depth);
+const render = (arr, depth = 0) => {
+  const endPrefix = '  '.repeat(depth * 2);
   const prefix = `${endPrefix}  `;
   const result = arr.map((item) => {
     const {
@@ -13,7 +13,7 @@ const stylishFormatter = (arr, depth = 0) => {
       value,
     } = item;
 
-    const getValue = (currentValue) => {
+    const getPreparedValue = (currentValue) => {
       if (!_.isPlainObject(currentValue)) {
         return currentValue;
       }
@@ -22,20 +22,20 @@ const stylishFormatter = (arr, depth = 0) => {
         type: 'unchanged',
         value: currentValue[currentKey],
       }));
-      return stylishFormatter(tree, depth + 2);
+      return render(tree, depth + 1);
     };
 
     switch (type) {
       case 'added':
-        return `${prefix}+ ${key}: ${getValue(value)}`;
+        return `${prefix}+ ${key}: ${getPreparedValue(value)}`;
       case 'deleted':
-        return `${prefix}- ${key}: ${getValue(value)}`;
+        return `${prefix}- ${key}: ${getPreparedValue(value)}`;
       case 'unchanged':
-        return `${prefix}  ${key}: ${getValue(value)}`;
+        return `${prefix}  ${key}: ${getPreparedValue(value)}`;
       case 'parent':
-        return `${prefix}  ${key}: ${stylishFormatter(children, depth + 2)}`;
+        return `${prefix}  ${key}: ${render(children, depth + 1)}`;
       case 'changed':
-        return `${prefix}- ${key}: ${getValue(valueBefore)}\n${prefix}+ ${key}: ${getValue(valueAfter)}`;
+        return `${prefix}- ${key}: ${getPreparedValue(valueBefore)}\n${prefix}+ ${key}: ${getPreparedValue(valueAfter)}`;
       default:
         throw new Error(`Unknown node type '${type}' in stylish formatter`);
     }
@@ -44,4 +44,4 @@ const stylishFormatter = (arr, depth = 0) => {
   return `{\n${result}\n${endPrefix}}`;
 };
 
-export default stylishFormatter;
+export default render;

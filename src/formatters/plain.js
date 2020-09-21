@@ -1,13 +1,13 @@
 import _ from 'lodash';
 
-const preparedValue = (value) => {
+const getPreparedValue = (value) => {
   if (_.isPlainObject(value)) {
     return '[complex value]';
   }
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-const plainFormatter = (tree) => {
+const render = (tree) => {
   const getChangedNodes = (nodes, path = []) => {
     const changedNodes = nodes.flatMap((node) => {
       const {
@@ -21,11 +21,11 @@ const plainFormatter = (tree) => {
       const currentPath = [...path, key].join('.');
       switch (type) {
         case 'added':
-          return `Property '${currentPath}' was added with value: ${preparedValue(value)}`;
+          return `Property '${currentPath}' was added with value: ${getPreparedValue(value)}`;
         case 'deleted':
           return `Property '${currentPath}' was removed`;
         case 'changed':
-          return `Property '${currentPath}' was updated. From ${preparedValue(valueBefore)} to ${preparedValue(valueAfter)}`;
+          return `Property '${currentPath}' was updated. From ${getPreparedValue(valueBefore)} to ${getPreparedValue(valueAfter)}`;
         case 'parent':
           return getChangedNodes(children, [...path, key]);
         case 'unchanged':
@@ -40,4 +40,4 @@ const plainFormatter = (tree) => {
   return result.join('\n');
 };
 
-export default plainFormatter;
+export default render;
