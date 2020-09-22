@@ -17,12 +17,12 @@ const render = (tree, depth = 0) => {
       if (!_.isPlainObject(currentValue)) {
         return currentValue;
       }
-      const tree = Object.keys(currentValue).map((currentKey) => ({
+      const subTree = Object.keys(currentValue).map((currentKey) => ({
         key: currentKey,
         type: 'unchanged',
         value: currentValue[currentKey],
       }));
-      return render(tree, depth + 1);
+      return render(subTree, depth + 1);
     };
 
     switch (type) {
