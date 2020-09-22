@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const getPreparedValue = (value) => {
+const formatValue = (value) => {
   if (_.isPlainObject(value)) {
     return '[complex value]';
   }
@@ -21,11 +21,11 @@ const render = (tree) => {
       const currentPath = [...path, key].join('.');
       switch (type) {
         case 'added':
-          return `Property '${currentPath}' was added with value: ${getPreparedValue(value)}`;
+          return `Property '${currentPath}' was added with value: ${formatValue(value)}`;
         case 'deleted':
           return `Property '${currentPath}' was removed`;
         case 'changed':
-          return `Property '${currentPath}' was updated. From ${getPreparedValue(valueBefore)} to ${getPreparedValue(valueAfter)}`;
+          return `Property '${currentPath}' was updated. From ${formatValue(valueBefore)} to ${formatValue(valueAfter)}`;
         case 'parent':
           return getChangedNodes(children, [...path, key]);
         case 'unchanged':
